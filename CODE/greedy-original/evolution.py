@@ -114,23 +114,18 @@ class Evolution:
         # for i in range(self.search_steps-1):  # search step这个循环条件修改为coverage和search cost的increment限制
         # 生成neighbors这一个对象，用于保存生成的neighbor individual
         while True:
-            # coverage和search cost平均increment增长小于threshold(即收敛)，或者方案中sensor数量超过特定值，循环结束
-            if sensor_number_max >= self.search_steps:  #(average_coverage_increment < self.coverage_increment_max and average_search_cost_increment < self.search_cost_increment_max) or
+            if sensor_number_max >= self.search_steps:
                 break
             else:
                 neighbors = Population()
                 for j in self.population:
-                    j_neighbor = self.utils.problem.create_individual_one_more_sensor(j,self.new_plans_num)
-                    neighbors.append(j)
+                    # 修改为遍历全部未选中的manhole
+                    j_neighbor = self.utils.problem.create_individual_one_more_sensor_all(j)
                     neighbors.extend(j_neighbor)
 
-                #print('new plans and old plans:'+str(len(neighbors)))
 
                 neighbors=self.utils.duplication_elimination(neighbors)
 
-                #print('new plans_no duplication:' + str(len(neighbors)))
-
-                # 对得到的新的solution进行non-dominated sorting计算，依据为objectives function
                 self.utils.fast_nondominated_sort(neighbors)
 
                 cnt = 0

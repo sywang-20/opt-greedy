@@ -163,7 +163,6 @@ class Problem:
 
     def create_individual_one_more_sensor(self,individual,n):
         individual_updated=[]
-
         i=0
         while i<n:
             i_plan_num=0
@@ -179,6 +178,17 @@ class Problem:
                         new_neighbor=self.generate_individual_with_positive_nodes(temp)  #这里有计算objective function
                         individual_updated.append(new_neighbor)
             i=i+1
+        return individual_updated
+
+    def create_individual_one_more_sensor_all(self,individual):
+        individual_updated=[]
+        selected_manholes=individual.positive_nodes.copy()
+        unselected_manholes=list(set(range(self.node_num))-set(selected_manholes))
+        for manhole in unselected_manholes:
+            temp = individual.positive_nodes.copy()
+            temp.append(manhole)
+            new_neighbor=self.generate_individual_with_positive_nodes(temp)
+            individual_updated.append(new_neighbor)
         return individual_updated
 
 
