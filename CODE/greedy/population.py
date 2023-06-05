@@ -16,3 +16,6 @@ class Population:
     def append(self, new_individual):
         # add one individual into the population
         self.population.append(new_individual)
+
+    def remove(self, individual):
+        self.population.remove(individual)

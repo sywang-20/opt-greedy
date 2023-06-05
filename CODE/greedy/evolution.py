@@ -70,18 +70,16 @@ class Evolution:
 
 
     def evolve(self):
-        # step 1：initialize the first population, with no sensor placed in the network，utils中具体generate的方法已经修改
-        self.population = self.utils.create_initial_population()
-        # # 初始十个individual没有问题
-        # for j in self.population:
-        #     test=list(j.chromosome)
-        #     print(test.index(1))
+        fig_path = self.fig_path
+        if not os.path.exists(fig_path):
+            os.makedirs(fig_path)
 
-        # 先给increment均值设置一些比较大的值，保证第一次循环可以进行
-        sensor_number_max=0
+        population_final = Population()
+        self.population = self.utils.create_initial_population()
 
         solutions_dict = {}
         population_dict = {}
+        final_solutions_dict = {}
 
         # 收敛图由目标函数刻画
         # objective function 1
@@ -100,8 +98,6 @@ class Evolution:
         q2_goal3_of_all = []
         q3_goal3_of_all = []
 
-        # coverage_increment=[]
-        # search_cost_increment=[]
 
         i = 1
 
@@ -109,13 +105,8 @@ class Evolution:
         print('reserved number of plans at each iteration: '+str(self.num_of_individuals))
         print('number of new plans generated from one plan: '+str(self.new_plans_num))
 
-        # 此处search step理解为想要布置的sensor总数，不修改变量名称了
-        # neighbor理解为增加一个sensor后的solution
-        # for i in range(self.search_steps-1):  # search step这个循环条件修改为coverage和search cost的increment限制
-        # 生成neighbors这一个对象，用于保存生成的neighbor individual
         while True:
-            # coverage和search cost平均increment增长小于threshold(即收敛)，或者方案中sensor数量超过特定值，循环结束
-            if sensor_number_max >= self.search_steps:  #(average_coverage_increment < self.coverage_increment_max and average_search_cost_increment < self.search_cost_increment_max) or
+            if len(population_final) >= self.num_of_individuals:
                 break
             else:
                 neighbors = Population()
@@ -124,13 +115,8 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-                #print('new plans and old plans:'+str(len(neighbors)))
 
-                neighbors=self.utils.duplication_elimination(neighbors)
-
-                #print('new plans_no duplication:' + str(len(neighbors)))
-
-                # 对得到的新的solution进行non-dominated sorting计算，依据为objectives function
+                neighbors=self.utils.duplication_elimination(neighbors) # 去重
                 self.utils.fast_nondominated_sort(neighbors)
 
                 cnt = 0
@@ -161,28 +147,29 @@ class Evolution:
                 self.population = new_population  # 得到一个新的population
 
                 self.utils.fast_nondominated_sort(self.population)  # 对新的population进行non-dominated sorting
-                # 对每个front计算crowding distance
                 for front in self.population.fronts:
                     self.utils.calculate_crowding_distance(front)
+                self.population.fronts[front_num].sort(key=lambda individual: individual.crowding_distance,
+                                                       reverse=True)
 
                 print('search step:' + str(i))
                 print('population len:' + str(len(self.population)))
 
                 # 取出greedy-nondominated sorting得到的解中front 0的目标函数值以及sensor-placed manhole
-                solutions_dict[i] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes] for i in
+                solutions_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
                                     self.population.fronts[0]]
                 # 取出所有solution的目标函数值以及sensor-placed manhole--> 这个得到的是greedy-nondominated algorithm的全部解
-                population_dict[i] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes] for i in
+                population_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
                                     self.population]
 
+                sen_num=[i.constraint[0] for i in self.population]
+                max_sensor_num=max(sen_num)
+                print('max sensor number: '+str(max_sensor_num))
+                print('sensor number:'+str(sen_num))
 
-
-                total_val1=[j.objectives[0]for j in self.population]
-                sensor_number_max=np.max(total_val1) #所有方案中sensor number的最大值
-
-
-                total_val2=[-j.objectives[1]for j in self.population]  #coverage
-                total_val3=[j.objectives[2]for j in self.population]   #search cost
+                total_val1=[j.constraint[0]for j in self.population]   # sensor number
+                total_val2=[-j.objectives[0]for j in self.population]  # coverage
+                total_val3=[j.objectives[1]for j in self.population]   # search cost
 
 
                 goal1_of_all.append(np.mean(total_val1))
@@ -200,9 +187,26 @@ class Evolution:
 
 
 
+                to_remove = Population()
+                for ind in self.population:
+                    if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
+                        print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
+                        population_final.append(ind)
+                        to_remove.append(ind)
+                        print('final population len:' + str(len(population_final)))
+
+                for ind in to_remove:
+                    self.population.remove(ind)
+
+                final=len(population_final)
+                print('final population len:' + str(final))
+
+                final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final]
+
+
             i=i+1
 
-        #print('search step(sensor_number)'+str(self.search_steps))
+        # 画图
         plt.figure(figsize=(50, 20))
         ax = plt.subplot(1, 3, 1)
         ax.set_title('Avg Sensor Number in Whole Population', fontsize=20)
@@ -226,57 +230,12 @@ class Evolution:
 
 
         with open(self.fig_path + '/solution.pkl', 'wb') as f:
-            # pickle.dump(obj,file): 把对象obj保存到文件file中
             pickle.dump(solutions_dict, f)
         with open(self.fig_path + '/population.pkl', 'wb') as f:
             pickle.dump(population_dict, f)
+        with open(self.fig_path + '/final_solution.pkl', 'wb') as f:
+            pickle.dump(final_solutions_dict, f)
 
-
-
-        # 最后一代
-        # 最后一个循环，前面的终止条件是search_step-1，这个相当于把search_step那一步补上
-        # 前面循环是根据batch_size选择每个循环neighbor的个数，最后一个循环是按照number of solutions来选择
-        # neighbors = Population()
-        # for j in self.population:
-        #     j_neighbor = self.utils.problem.create_individual_one_more_sensor(j,self.new_plans_num)
-        #     neighbors.extend(j_neighbor)
-        #
-        # self.utils.fast_nondominated_sort(neighbors)
-        #
-        # cnt = 0
-        # for front in neighbors.fronts:
-        #     self.utils.calculate_crowding_distance(front)
-        #     print(cnt, 'front  len ', len(front))
-        #     cnt += 1
-        # #
-        # new_population = Population()
-        # front_num = 0
-        #
-        # while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_solutions:
-        #     print('loop')
-        #     self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
-        #     new_population.extend(neighbors.fronts[front_num])
-        #     front_num += 1
-        #     print(front_num)
-        # #
-        # print('final front num', front_num)
-        # self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
-        # neighbors.fronts[front_num].sort(key=lambda individual: individual.crowding_distance, reverse=True)
-        # new_population.extend(neighbors.fronts[front_num][0:self.num_of_solutions - len(new_population)])
-        # self.population = new_population
-        #
-        # self.utils.fast_nondominated_sort(self.population)
-        # for front in self.population.fronts:
-        #     self.utils.calculate_crowding_distance(front)
-        #
-        # solutions_dict[self.search_steps - 1] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes]
-        #                                          for i in
-        #                                          self.population.fronts[0]]
-        #
-        # population_dict[self.search_steps - 1] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes]
-        #                                           for i in
-        #                                           self.population]
-        #
 
 
 

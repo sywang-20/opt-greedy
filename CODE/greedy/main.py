@@ -8,6 +8,7 @@ from problem import Problem  # 构建problem
 import objective  # 目标函数的计算
 import individual
 import time
+import constraint
 
 '''
 multi-objective greedy algorithm for real-life-case
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     --outdir simulation结果的输出目录
     """
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
-    parser.add_argument("--iter", type=int, default=5, help="the iteration number")  # 迭代次数，sensor number的upper bound
+    parser.add_argument("--iter", type=int, default=5, help="the iteration number")  #迭代次数，sensor number的upper bound
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--new_plans", type=int, default=20, help="the number of new plans generated from one sensor")
     parser.add_argument("--datadir", type=str, default="../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     #通过循环进行多次计算
     #for i in range(10):
     #fig_path = os.path.join(output_dir,'iter_' + str(search_steps) +'_coverage_' + str(coverage_increment_max) +'_search_cost_' + str(search_cost_increment_max) +'_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
-    fig_path = os.path.join(output_dir, 'iter_' + str(search_steps) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
+    fig_path = os.path.join(output_dir, 'iter_' + str(search_steps) + '_Lmax_' + str(num_of_individuals) + '_new_plans_'+ str(new_plans_num) + '/')
 
     # 根据输出数据目录是否存在，创建目录
     if not os.path.exists(fig_path):
@@ -95,10 +96,11 @@ if __name__ == '__main__':
     priority = np.ones(node_num)
 
     # Describes important constraints in the simulation implementation.构建这么一个多目标优化的问题，用于后续使用evo进行求解
-    problem = Problem(objectives=[objective.sensor_num, objective.coverage, objective.new_search_cost_by_topology_2],
+    problem = Problem(objectives=[objective.coverage, objective.new_search_cost_by_topology_2],
+                      constraint=[constraint.sensor_num],
                       # 目标函数
                       node_num=node_num, upstream_arr=upstream_arr,  # 限制条件以及一些需要的数据
-                      upstream_set=upstream_set,  # sensor_upbound=sensor_upbound,sensor_lowbound=10,
+                      upstream_set=upstream_set,
                       graph=relabeled_G,
                       conn_dict=conn_dict)
 

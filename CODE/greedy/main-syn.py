@@ -15,6 +15,7 @@ import math
 import pickle
 import argparse
 import os
+import constraint
 
 # def create_conn_dict(G):
 #     n = len(G)
@@ -48,20 +49,19 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     # 读取前面的各类参数
-    search_steps = args.iter
+    #search_steps = args.iter
     output_dir = args.outdir
     parent_dir = args.datadir
     num_of_individuals = args.num_of_individual
     new_plans_num = args.new_plans
     size= args.size
+    search_steps=int(size/10)
 
     case_dir="../../DATA/synthetic_network/"+str(size)+"/"
     # 数一下这个size下有多少个不同网络
     count = 0
     for file in os.listdir(case_dir):  # file 表示的是文件名
         count += 1
-
-    print(count)
 
     for i in range(count):
         sol_dir= '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)
@@ -85,32 +85,30 @@ if __name__=='__main__':
             conn_dict = pickle.load(tf)
         tf.close()
 
-        print('read data')
-
-        #sol=[14,21,11]
-        sol=[9,5,1,18,19,20,25]
 
         sample=np.ones(len(upstream_arr))
 
-        problem = Problem(objectives=[objective.sensor_num,objective.coverage,objective.new_search_cost_by_topology_2], node_num=node_num, upstream_arr=upstream_arr,
+        problem = Problem(objectives=[objective.coverage,objective.new_search_cost_by_topology_2], constraint=[constraint.sensor_num],node_num=node_num, upstream_arr=upstream_arr,
                          upstream_set=upstream_set,graph=relabeled_G,conn_dict=conn_dict)
 
         fig_path = '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)+'/'
-        # fig_path='./diversitytest/'
+
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
         suffix=0
         for file in os.listdir(fig_path):
             suffix+=1
-        fig_path=fig_path+"/"+str(suffix)+"/"
+        fig_path=fig_path+str(suffix)
+
 
         # fig_path="E:/Study/HKU/docu for the draft/result_analysis/constrain_result/"+str(iter)+'_m'+str(mp)+'_c'+str(cp)+'_up'+str(upbound)+'/'
-        evo = Evolution(problem, search_steps = search_steps, num_of_individuals = num_of_individuals, new_plans_num = new_plans_num,fig_path=fig_path,node_num=node_num,sol=sol)
+        evo = Evolution(problem, search_steps=search_steps, num_of_individuals=num_of_individuals,new_plans_num=new_plans_num, fig_path=fig_path, node_num=node_num)
 
         print("start")
-        solution = evo.evolve_new_syn()
-        goals = [i.objectives for i in solution]
+        solution = evo.evolve()
 
-        coverage_goal = [i[0] for i in goals]
-        sensor_num_goal = [i[1] for i in goals]
-        search_cost_goal = [i[2] for i in goals]
+        # goals = [i.objectives for i in solution]
+        #
+        # coverage_goal = [i[0] for i in goals]
+        # sensor_num_goal = [i[1] for i in goals]
+        # search_cost_goal = [i[2] for i in goals]

@@ -30,13 +30,13 @@ class Problem:
         conn_dict = Connectivity of the original sewage sensor network.
         coverage_constrain = A Float constraining the minimum coverage by coverage_constrain*total coverage.
     """
-    def __init__(self, objectives,node_num,upstream_arr,upstream_set,conn_dict={},graph=None,sol={}):
+    def __init__(self, objectives,constraint,node_num,upstream_arr,upstream_set,conn_dict={},graph=None,sol={}):
         """
         Problem object initialization
         """
         self.num_of_objective=len(objectives)
         self.objectives=objectives
-        #self.objectives_increment=objectives_increment
+        self.constraint=constraint
         self.node_num=node_num
         self.upstream_arr=upstream_arr
         self.upstream_set=upstream_set
@@ -58,6 +58,7 @@ class Problem:
         for i in positive_nodes:
             individual.chromosome[i]=1
         self.calculate_objectives(individual)
+        self.calculate_constraint(individual)
 
         return individual
 
@@ -139,6 +140,9 @@ class Problem:
         individual.coverage_set=coverage_set  # 得到每个solution的coverage set
         individual.objectives=[f(self,individual) for f in self.objectives]
         individual.positive_nodes = np.array(np.where(individual.chromosome == 1))[0].tolist()
+
+    def calculate_constraint(self,individual):
+        individual.constraint=[f(self,individual) for f in self.constraint]
 
 
     def create_individual_neighbor(self,individual):

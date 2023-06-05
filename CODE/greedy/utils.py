@@ -38,6 +38,7 @@ class NSGA2Utils:
             individual = self.problem.generate_individual_one_sensor()
             # 计算这些solution对应的objective function的值
             self.problem.calculate_objectives(individual)
+            self.problem.calculate_constraint(individual)
             # 把生成的individual加入到population中
             population.append(individual)
         return population
@@ -120,3 +121,10 @@ class NSGA2Utils:
         temp=list(set(tuple(i) for i in population))
         individual_no_duplication.extend(temp)
         return individual_no_duplication
+
+    def duplication_constraint(self,population):
+        individual_constraint=Population()
+        for individual in population:
+            if individual.constraint<=self.num_of_individuals:
+                individual_constraint.append(individual)
+        return individual_constraint

@@ -7,7 +7,7 @@ class Individual(object):
         self.domination_count = None
         self.dominated_solutions = None
         self.objectives = None
-        #self.objectives_increment=None # 增加一个考虑目标函数增量的attribute
+        self.constraint = None
         self.Gsub=None
         self.chromosome_length=chromosome_length
         self.chromosome = np.zeros(chromosome_length,int)
