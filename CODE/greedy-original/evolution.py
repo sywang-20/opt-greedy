@@ -70,6 +70,11 @@ class Evolution:
 
 
     def evolve(self):
+        fig_path = self.fig_path
+        # print(first_population)
+
+        if not os.path.exists(fig_path):
+            os.makedirs(fig_path)
         # step 1：initialize the first population, with no sensor placed in the network，utils中具体generate的方法已经修改
         self.population = self.utils.create_initial_population()
         # # 初始十个individual没有问题
@@ -125,6 +130,9 @@ class Evolution:
 
 
                 neighbors=self.utils.duplication_elimination(neighbors)
+                # print('number of neighbors: '+str(len(neighbors)))
+                # for ind in neighbors:
+                #     print(ind.chromosome)
 
                 self.utils.fast_nondominated_sort(neighbors)
 
@@ -164,20 +172,20 @@ class Evolution:
                 print('population len:' + str(len(self.population)))
 
                 # 取出greedy-nondominated sorting得到的解中front 0的目标函数值以及sensor-placed manhole
-                solutions_dict[i] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes] for i in
+                solutions_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
                                     self.population.fronts[0]]
                 # 取出所有solution的目标函数值以及sensor-placed manhole--> 这个得到的是greedy-nondominated algorithm的全部解
-                population_dict[i] = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes] for i in
+                population_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
                                     self.population]
 
 
 
-                total_val1=[j.objectives[0]for j in self.population]
-                sensor_number_max=np.max(total_val1) #所有方案中sensor number的最大值
+                total_val1=[j.constraint[0] for j in self.population]
+                sensor_number_max=np.max(total_val1)
 
 
-                total_val2=[-j.objectives[1]for j in self.population]  #coverage
-                total_val3=[j.objectives[2]for j in self.population]   #search cost
+                total_val2=[-j.objectives[0]for j in self.population]  #coverage
+                total_val3=[j.objectives[1]for j in self.population]   #search cost
 
 
                 goal1_of_all.append(np.mean(total_val1))

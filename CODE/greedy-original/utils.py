@@ -38,6 +38,7 @@ class NSGA2Utils:
             individual = self.problem.generate_individual_one_sensor()
             # 计算这些solution对应的objective function的值
             self.problem.calculate_objectives(individual)
+            self.problem.calculate_constraint(individual)
             # 把生成的individual加入到population中
             population.append(individual)
         return population
