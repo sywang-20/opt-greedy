@@ -16,6 +16,7 @@ import pickle
 import argparse
 import os
 import constraint
+import time
 
 # def create_conn_dict(G):
 #     n = len(G)
@@ -104,7 +105,12 @@ if __name__=='__main__':
         evo = Evolution(problem, search_steps=search_steps, num_of_individuals=num_of_individuals, fig_path=fig_path, node_num=node_num)
 
         print("start")
+        start= time.time()
         solution = evo.evolve()
+        end=time.time()
+
+        with open(os.path.join(fig_path, "time.txt"), "w") as tf:
+            tf.write(str(end - start))
 
         # goals = [i.objectives for i in solution]
         #
