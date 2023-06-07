@@ -50,7 +50,7 @@ if __name__ == '__main__':
     #parser.add_argument("--new_plans", type=int, default=20, help="the number of new plans generated from one sensor")
     parser.add_argument("--datadir", type=str, default="../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
     parser.add_argument("--outdir", type=str,
-                        default="../../TESTOUTPUT/local_search/greedy/")  # 对应输出结果的保存目录
+                        default="../../TESTOUTPUT/local_search/greedy_original/")  # 对应输出结果的保存目录
     # parser.add_argument("--coverage", type=int, default=500, help="maximum coverage increment")
     # parser.add_argument("--searchcost", type=float, default=0.01, help="maximum search cost")
     # parser.add_argument("--plans_num_per", type=int, default=20, help="the number of reserved new plans generated from one sensor")

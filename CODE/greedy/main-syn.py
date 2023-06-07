@@ -92,7 +92,7 @@ if __name__=='__main__':
         problem = Problem(objectives=[objective.coverage,objective.new_search_cost_by_topology_2], constraint=[constraint.sensor_num],node_num=node_num, upstream_arr=upstream_arr,
                          upstream_set=upstream_set,graph=relabeled_G,conn_dict=conn_dict)
 
-        fig_path = '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)+'/'
+        fig_path = '../../TESTOUTPUT/synthetic_simulation/greedy_evo/'+str(size)+'/'+str(i)+'/'
 
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
