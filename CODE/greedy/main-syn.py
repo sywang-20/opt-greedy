@@ -36,6 +36,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
 
     # 需要用的参数都直接修改default，只留一个size
+    # 每一步增加的sensor数量不能少于保留的plan数量
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
     parser.add_argument("--iter", type=int, default=5, help="the iteration number")  # 迭代次数，sensor number的upper bound
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
@@ -64,7 +65,9 @@ if __name__=='__main__':
     for file in os.listdir(case_dir):  # file 表示的是文件名
         count += 1
 
+
     for i in range(count):
+    #for i in range(count):
         sol_dir= '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)
         if os.path.exists(sol_dir):
             continue

@@ -115,8 +115,9 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-
+                print('number of neighbors-no-duplication: '+str(len(neighbors)))
                 neighbors=self.utils.duplication_elimination(neighbors) # 去重
+                print('number of neighbors: '+str(len(neighbors)))
                 self.utils.fast_nondominated_sort(neighbors)
 
                 cnt = 0
