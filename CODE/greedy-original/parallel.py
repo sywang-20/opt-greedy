@@ -13,7 +13,8 @@ def run_case_size(size):
 
 
 if __name__ == '__main__':
-    size=[200,300]
+    size = list(range(100, 2100, 100))
+    size.extend([2500, 3000])
     print(size)
     cpu_count = os.cpu_count()
     #t = [(onesize) for onesize in size]
