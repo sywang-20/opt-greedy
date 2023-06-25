@@ -40,7 +40,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
     parser.add_argument("--iter", type=int, default=5, help="the iteration number")  # 迭代次数，sensor number的upper bound
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
-    parser.add_argument("--new_plans", type=int, default=20, help="the number of new plans generated from one sensor")
+    parser.add_argument("--new_plans", type=int, default=2, help="the number of new plans generated from one sensor")
     parser.add_argument("--datadir", type=str, default="../../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
     parser.add_argument("--outdir", type=str,
                         default="../../../TESTOUTPUT/local_search/greedy_nondominated_parameter_latest/")  # 对应输出结果的保存目录
@@ -61,12 +61,12 @@ if __name__=='__main__':
 
     case_dir="../../DATA/synthetic_network/"+str(size)+"/"
     # 数一下这个size下有多少个不同网络
-    count = 0
-    for file in os.listdir(case_dir):  # file 表示的是文件名
-        count += 1
+    # count = 0
+    # for file in os.listdir(case_dir):  # file 表示的是文件名
+    #     count += 1
 
 
-    for i in range(count):
+    for i in [0]: #range(count):
     #for i in range(count):
         sol_dir= '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)
         if os.path.exists(sol_dir):
