@@ -115,9 +115,9 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-                print('number of neighbors-no-duplication: '+str(len(neighbors)))
-                neighbors=self.utils.duplication_elimination(neighbors) # 去重
                 print('number of neighbors: '+str(len(neighbors)))
+                neighbors=self.utils.duplication_elimination(neighbors) # 去重
+                print('number of neighbors-no-duplication: '+str(len(neighbors)))
                 self.utils.fast_nondominated_sort(neighbors)
 
                 cnt = 0
@@ -144,9 +144,56 @@ class Evolution:
                                              reverse=True)  # 计算了crowding distance后，对其进行排序
                 new_population.extend(
                     neighbors.fronts[front_num][0:self.num_of_individuals - len(new_population)])  # 把符合数量要求的solution加进去
+                
+                print('new population len-for final solution:' + str(len(new_population)))
+                print('self.population len-before adding to final solution:' + str(len(self.population)))
 
-                self.population = new_population  # 得到一个新的population
+                # 对于new population中的解，选择符合要求的加入final solution
+                to_remove = Population()
+                for ind in new_population:
+                    if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
+                        print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
+                        population_final.append(ind)
+                        to_remove.append(ind)
+                        print('final population len:' + str(len(population_final)))
 
+                for ind in to_remove:
+                    self.population.remove(ind)
+
+                print('self.population len-after removing final solution:' + str(len(self.population)))
+                #self.population = new_population  # 得到一个新的population
+
+                # 去掉放入final solution的解，剩下的解选择num_of_individuals个加入下一步的population
+                self.utils.fast_nondominated_sort(self.population)
+                cnt = 0
+                for front in self.population.fronts:
+                    self.utils.calculate_crowding_distance(front)
+                    cnt += 1
+
+                new_population2 = Population()
+                front_num = 0
+
+                while len(new_population2) + len(self.population.fronts[front_num]) <= self.num_of_individuals:
+                    print('loop')
+                    self.utils.calculate_crowding_distance(self.population.fronts[front_num])
+                    new_population2.extend(self.population.fronts[front_num])  # 把这个front全部加进去
+                    front_num += 1  # 更新front
+                    print(front_num)
+
+                print('final front num', front_num)  # 第一个不满足while判断的front，可能只有部分可以加进去
+                self.utils.calculate_crowding_distance(self.population.fronts[front_num])  # 对这个front的crowding distance进行计算
+                self.population.fronts[front_num].sort(key=lambda individual: individual.crowding_distance,
+                                             reverse=True)  # 计算了crowding distance后，对其进行排序
+                new_population2.extend(
+                    self.population.fronts[front_num][0:self.num_of_individuals - len(new_population2)])
+                
+
+                # 得到一个新的population
+                self.population = new_population2  
+                
+                print('self.population len-adding to next step:' + str(len(self.population)))
+
+                # sorting后保存解
                 self.utils.fast_nondominated_sort(self.population)  # 对新的population进行non-dominated sorting
                 for front in self.population.fronts:
                     self.utils.calculate_crowding_distance(front)
@@ -186,26 +233,25 @@ class Evolution:
                 q2_goal3_of_all.append(np.percentile(total_val3, 50))
                 q3_goal3_of_all.append(np.percentile(total_val3, 75))
 
+                # to_remove = Population()
+                # for ind in self.population:
+                #     if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
+                #         print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
+                #         population_final.append(ind)
+                #         to_remove.append(ind)
+                #         print('final population len:' + str(len(population_final)))
 
+                # for ind in to_remove:
+                #     self.population.remove(ind)
 
-                to_remove = Population()
-                for ind in self.population:
-                    if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
-                        print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
-                        population_final.append(ind)
-                        to_remove.append(ind)
-                        print('final population len:' + str(len(population_final)))
+                # final=len(population_final)
+                # print('final population len:' + str(final))
 
-                for ind in to_remove:
-                    self.population.remove(ind)
-
-                final=len(population_final)
-                print('final population len:' + str(final))
-
-                final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final]
-
+                # final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final]
 
             i=i+1
+        
+        final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final]
 
         # 画图
         plt.figure(figsize=(50, 20))
