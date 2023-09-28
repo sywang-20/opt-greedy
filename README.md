@@ -15,9 +15,11 @@ the NSGA-II code
   
 ## synthetic case  
 ### *algorithm comparison and parameter sensitivity*
-*RQ 1: how the evolutionary greedy algorithm performs compared with the original greedy algorithm on the networks with different sizes?*
+*RQ 1: how does the evolutionary greedy algorithm perform compared with the original greedy algorithm on the networks with different sizes?*
 
-*RQ 2: how the parameter 'new_plans' affects the performance of the evolutionary greedy algorithm?*
+can also consider other greedy family algorithm
+
+*RQ 2: how does the parameter 'new_plans' affect the performance of the evolutionary greedy algorithm?*
 
 test different values of 'new_plans' in the evolutionary greedy algorithm, and compare the performance of the algorithm with the original greedy algorithm (measure it using the difference between evolutioary and original greedy)
 
