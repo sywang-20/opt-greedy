@@ -21,7 +21,7 @@ can also consider other greedy family algorithms
 
 *RQ 2: how does the parameter 'new_plans' affect the performance of the evolutionary greedy algorithm?*
 
-test different values of 'new_plans' in the evolutionary greedy algorithm, and compare the performance of the algorithm with the original greedy algorithm (measure it using the difference between evolutioary and original greedy)
+test different values of 'new_plans' in the evolutionary greedy algorithm, and compare the performance of the algorithm with the original greedy algorithm (measure it using the difference between evolutionary and original greedy)
 
 **evolutionary greedy**
 - at each step:
