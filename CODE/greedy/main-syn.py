@@ -28,27 +28,20 @@ if __name__=='__main__':
     # 需要用的参数都直接修改default，只留一个size
     # 每一步增加的sensor数量不能少于保留的plan数量
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
-    parser.add_argument("--max_sensor", type=int, default=5, help="upper bound of the number of sensors")  #sensor number的upper bound
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--new_plans", type=int, default=2, help="the number of new plans generated from one sensor")
-    # parser.add_argument("--datadir", type=str, default="../../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
-    # parser.add_argument("--outdir", type=str,
-    #                     default="../../../TESTOUTPUT/local_search/greedy_nondominated_parameter_latest/")  # 对应输出结果的保存目录
     parser.add_argument("--size", type=int, default=100, help="the size of the network")
 
     args = parser.parse_args()
 
     # 读取前面的各类参数
-    #max_sensor = args.max_sensor
-    # output_dir = args.outdir
-    # parent_dir = args.datadir
     num_of_individuals = args.num_of_individual
     new_plans_num = args.new_plans
     size= args.size
     max_sensor=int(size/10)
 
     case_dir="../../DATA/synthetic_network/"+str(size)+"/"
-    # 数一下这个size下有多少个不同网络。若使用这个，则是遍历所有同一size的synthetic network
+    # # 数一下这个size下有多少个不同网络。若使用这个，则是遍历所有同一size的synthetic network
     # count = 0
     # for file in os.listdir(case_dir):  # file 表示的是文件名
     #     count += 1
@@ -57,8 +50,7 @@ if __name__=='__main__':
     count=0
 
 
-    for i in range(count+1): #range(count):
-    #for i in range(count):
+    for i in range(count+1):
         sol_dir= '../../TESTOUTPUT/synthetic_simulation/'+str(size)+'/'+str(i)
         if os.path.exists(sol_dir):
             continue

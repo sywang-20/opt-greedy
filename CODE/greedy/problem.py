@@ -68,7 +68,7 @@ class Problem:
         生成只有一个sensor的individual
         """
         individual=Individual(self.node_num)  #一个和网络node个数一样的solution
-        # positive_num=0 # 原本是sensor numer上下界中取一个随机数n，设置n个sensor，现在修改为0个，即初始情况-->从0开始，这样循环里就是从1开始
+        # positive_num=1 # 原本是sensor numer上下界中取一个随机数n，设置n个sensor，现在修改为0个，即初始情况-->从0开始，这样循环里就是从1开始
         # positive_nodes=random.sample(list(range(self.node_num)),positive_num)  #随机在网络中设置positive node，即布置sensor
         # individual.positive_nodes=positive_nodes
         #
@@ -125,12 +125,7 @@ class Problem:
         # individual.chromosome=np.zeros(len(self.upstream_arr))
         # for i in individual.positive_nodes:
         #     individual.chromosome[i]=1
-
-
-        # individual.Gsub=topology.extract_connectivity_subgraph(self.graph,individual.chromosome)
         individual.Gsub=topology.extract_connectivity_fastdict(self.graph, individual.chromosome,self.conn_dict)
-        # print('dict len:',len(self.conn_dict))
-
         downstream_node = [i[0] for i in individual.Gsub.out_degree() if i[1] == 0]  # Gsub中每个subgraph最下游的node
         coverage_set = set()
         for i in downstream_node:

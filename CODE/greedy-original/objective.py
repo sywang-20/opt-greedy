@@ -55,7 +55,10 @@ def search_cost(problem, individual):
 
 #-------------------------------coverage 计算-------------------------
 def coverage(problem,individual):
-    coverage = len(individual.coverage_set)
+    if np.sum(individual.chromosome) == 0:
+        coverage = 0
+    else:
+        coverage = len(individual.coverage_set)
     return -coverage
 
 
