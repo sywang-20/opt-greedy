@@ -35,10 +35,10 @@ class NSGA2Utils:
         for i in range(self.num_of_individuals):
             # print(i,'th individual')
             # problem中generate_individual是生成单个individual的，修改这个让他只产生布置了一个sensor的解
-            individual = self.problem.generate_individual_one_sensor()
+            individual = self.problem.generate_individual_no_sensor()
             # 计算这些solution对应的objective function的值
-            self.problem.calculate_objectives(individual)
-            self.problem.calculate_constraint(individual)
+            # self.problem.calculate_objectives(individual)
+            # self.problem.calculate_constraint(individual)
             # 把生成的individual加入到population中
             population.append(individual)
         return population

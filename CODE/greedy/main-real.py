@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 import argparse
 import os
-from evolution import Evolution  # control the iterative process of NSGA-II
+from evolution import Evolution  # control the max_sensorative process of NSGA-II
 from problem import Problem  # 构建problem
 import objective  # 目标函数的计算
 import individual
@@ -40,13 +40,13 @@ if __name__ == '__main__':
 
     """
     PARAMETER INITIALIZATION，设置各类参数
-    --iter 每次placement中sensor总数的上限
+    --max_sensor 每次placement中sensor总数的上限
     --case 对应real-life or synthetic case
     --datadir 对应网络数据文件目录
     --outdir simulation结果的输出目录
     """
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
-    parser.add_argument("--iter", type=int, default=5, help="the iteration number")  #迭代次数，sensor number的upper bound
+    parser.add_argument("--max_sensor", type=int, default=5, help="the max_sensoration number")  #迭代次数，sensor number的upper bound
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--new_plans", type=int, default=20, help="the number of new plans generated from one sensor")
     parser.add_argument("--datadir", type=str, default="../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # 读取前面的各类参数
-    search_steps = args.iter
+    max_sensor = args.max_sensor
     output_dir = args.outdir
     parent_dir = args.datadir
     num_of_individuals = args.num_of_individual
@@ -79,8 +79,8 @@ if __name__ == '__main__':
     start=time.time()
     #通过循环进行多次计算
     #for i in range(10):
-    #fig_path = os.path.join(output_dir,'iter_' + str(search_steps) +'_coverage_' + str(coverage_increment_max) +'_search_cost_' + str(search_cost_increment_max) +'_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
-    fig_path = os.path.join(output_dir, 'iter_' + str(search_steps) + '_Lmax_' + str(num_of_individuals) + '_new_plans_'+ str(new_plans_num) + '/')
+    #fig_path = os.path.join(output_dir,'max_sensor_' + str(max_sensor) +'_coverage_' + str(coverage_increment_max) +'_search_cost_' + str(search_cost_increment_max) +'_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
+    fig_path = os.path.join(output_dir, 'max_sensor_' + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_'+ str(new_plans_num) + '/')
 
     # 根据输出数据目录是否存在，创建目录
     if not os.path.exists(fig_path):
@@ -104,8 +104,8 @@ if __name__ == '__main__':
                       graph=relabeled_G,
                       conn_dict=conn_dict)
 
-    # controls the iterative process of NSGA-II. evolution函数对上面构建的problem进行求解-->需要修改算法的话，应该主要修改evolution里的东西
-    evo = Evolution(problem, search_steps=search_steps, num_of_individuals=num_of_individuals,  #每个iteration保留多少plan
+    # controls the max_sensorative process of NSGA-II. evolution函数对上面构建的problem进行求解-->需要修改算法的话，应该主要修改evolution里的东西
+    evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,  #每个max_sensoration保留多少plan
                     new_plans_num=new_plans_num,  #每一个plan0生成多少个新plan   ,batch_size=10
                     #coverage_increment_max=coverage_increment_max, search_cost_increment_max=search_cost_increment_max,  #plans_num_per=plans_num_per,
                     fig_path=fig_path)

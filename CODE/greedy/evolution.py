@@ -18,14 +18,14 @@ class Evolution:
 
 
 
-    def __init__(self, problem, search_steps=5, num_of_individuals=100,  #batch_size=10,
-                 new_plans_num=25, #coverage_increment_max=500, search_cost_increment_max=0.01,
+    def __init__(self, problem, max_sensor=5, num_of_individuals=100,  #batch_size=10,
+                 new_plans_num=20, #coverage_increment_max=500, search_cost_increment_max=0.01,
                  fig_path='./output/',sol={}, node_num=10):
         print('init Evolution')
         self.utils = NSGA2Utils(problem, num_of_individuals)
         self.population = None
         self.initial_population = None
-        self.search_steps = search_steps  # search_steps: 最终方案需要多少个sensor
+        self.max_sensor = max_sensor  # max_sensor: 最终方案需要多少个sensor
         self.new_plans_num = new_plans_num   # 每个iteration生成多少新plan
         self.on_generation_finished = []
         self.num_of_individuals = num_of_individuals   # 每个iteration保留多少个plan
@@ -73,8 +73,9 @@ class Evolution:
         fig_path = self.fig_path
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
-
+        # 创建一个空的population用于保存最终解
         population_final = Population()
+
         self.population = self.utils.create_initial_population()
 
         solutions_dict = {}
@@ -101,7 +102,7 @@ class Evolution:
 
         i = 1
 
-        print('sensor number upper bound: '+str(self.search_steps))
+        print('sensor number upper bound: '+str(self.max_sensor))
         print('reserved number of plans at each iteration: '+str(self.num_of_individuals))
         print('number of new plans generated from one plan: '+str(self.new_plans_num))
 
@@ -151,7 +152,7 @@ class Evolution:
                 # 对于new population中的解，选择符合要求的加入final solution
                 to_remove = Population()
                 for ind in new_population:
-                    if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
+                    if ind.constraint[0]==self.max_sensor and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
                         print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
                         population_final.append(ind)
                         to_remove.append(ind)
@@ -235,7 +236,7 @@ class Evolution:
 
                 # to_remove = Population()
                 # for ind in self.population:
-                #     if ind.constraint[0]==self.search_steps and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
+                #     if ind.constraint[0]==self.max_sensor and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
                 #         print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
                 #         population_final.append(ind)
                 #         to_remove.append(ind)

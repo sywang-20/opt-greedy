@@ -63,17 +63,17 @@ class Problem:
         return individual
 
     # new!!!!!
-    def generate_individual_one_sensor(self):
+    def generate_individual_no_sensor(self):
         """
         生成只有一个sensor的individual
         """
         individual=Individual(self.node_num)  #一个和网络node个数一样的solution
-        positive_num=0 # 原本是sensor numer上下界中取一个随机数n，设置n个sensor，现在修改为0个，即初始情况-->从0开始，这样循环里就是从1开始
-        positive_nodes=random.sample(list(range(self.node_num)),positive_num)  #随机在网络中设置positive node，即布置sensor
-        individual.positive_nodes=positive_nodes
-
-        for i in positive_nodes:
-            individual.chromosome[i]=1
+        # positive_num=0 # 原本是sensor numer上下界中取一个随机数n，设置n个sensor，现在修改为0个，即初始情况-->从0开始，这样循环里就是从1开始
+        # positive_nodes=random.sample(list(range(self.node_num)),positive_num)  #随机在网络中设置positive node，即布置sensor
+        # individual.positive_nodes=positive_nodes
+        #
+        # for i in positive_nodes:
+        #     individual.chromosome[i]=1
         return individual
 
 
