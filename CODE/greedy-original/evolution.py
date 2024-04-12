@@ -77,9 +77,9 @@ class Evolution:
         # step 1：initialize the first population, with no sensor placed in the network，utils中具体generate的方法已经修改
         self.population = self.utils.create_initial_population()
         # # 初始5个individual没有问题
-        for j in self.population:
-            test=list(j.chromosome)
-            print(test)
+        # for j in self.population:
+        #     test=list(j.chromosome)
+        #     print(test)
 
         # # 先给increment均值设置一些比较大的值，保证第一次循环可以进行
         # sensor_number_max=0
