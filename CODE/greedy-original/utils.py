@@ -35,10 +35,10 @@ class NSGA2Utils:
         for i in range(self.num_of_individuals):
             # print(i,'th individual')
             # problem中generate_individual是生成单个individual的，修改这个让他只产生布置了一个sensor的解
-            individual = self.problem.generate_individual_one_sensor()
+            individual = self.problem.generate_individual_no_sensor()
             # 计算这些solution对应的objective function的值
-            self.problem.calculate_objectives(individual)
-            self.problem.calculate_constraint(individual)
+            # self.problem.calculate_objectives(individual)
+            # self.problem.calculate_constraint(individual)
             # 把生成的individual加入到population中
             population.append(individual)
         return population
@@ -109,7 +109,7 @@ class NSGA2Utils:
     # @profile
     # 新的！！！！增加一个sensor之后，把重复的sensor placement plan删掉
     def duplication_elimination(self,population):
-        individual_no_duplication=Population()   # 而不是空的list
+        individual_no_duplication=Population()
         for individual in population:
             if individual not in individual_no_duplication:
                 individual_no_duplication.append(individual)

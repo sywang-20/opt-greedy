@@ -211,18 +211,12 @@ def search_cost_by_topology(problem,individual):
 # -----------------------------计算search cost-------------------------------------------------
 def final_edition_search_cost(problem, individual):
 
-    # print('upstram,',len(problem.upstream_set))
     if np.sum(individual.chromosome)==0:
             search_cost=0
     else:
 
         # 首先转为undirected计算不连通的子集
         undirected_Gsub = individual.Gsub.to_undirected()
-        # nodeSet = []
-        # for c in nx.connected_components(undirected_Gsub):
-        #     # 得到不连通的子集
-        #     # nodeSet.append(list(undirected_Gsub.subgraph(c).nodes()))
-        #     nodeSet.append(set(undirected_Gsub.subgraph(c).nodes()))
         nodeSet=[set(undirected_Gsub.subgraph(c).nodes()) for c in nx.connected_components(undirected_Gsub)]
  
         coverage_set=individual.coverage_set
@@ -232,7 +226,6 @@ def final_edition_search_cost(problem, individual):
 
         # 首先计算additional upstream
         additional_upstream = {}
-        # temp_positive_manholes = np.array(np.where(individual.chromosome==1 ))[0].tolist()
 
         while coverage_set:
             upstream_nodes = [i[0] for i in temp_Gsub.in_degree() if i[1] == 0]
@@ -241,23 +234,18 @@ def final_edition_search_cost(problem, individual):
                 length=len(temp_set)
 
                 additional_upstream[i] = len(temp_set)
-                # coverage_set1 = coverage_set.difference(problem.upstream_set[i])
                 coverage_set.difference_update(problem.upstream_set[i])
                 temp_Gsub.remove_node(i)
-
-
 
         for component in nodeSet:
             temp_coverage_set=set()
             for node in component:
 
                 temp_coverage_set.update(problem.upstream_set[node])
-                # temp_coverage_set=temp_coverage_set|problem.upstream_set[node]
             bunch_size=len(temp_coverage_set)
             for node in component:
                 if node in additional_upstream and additional_upstream[node]>0:
                     search_cost += math.log(additional_upstream[node], 2) * additional_upstream[node] / coverage
-        #search_cost=search_cost/np.sum(individual.chromosome)
 
     return search_cost
 

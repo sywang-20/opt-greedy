@@ -56,7 +56,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # 读取前面的各类参数
-    search_steps = args.iter
+    max_sensor = args.iter
     output_dir = args.outdir
     parent_dir = args.datadir
     num_of_individuals = args.num_of_individual
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
 
     start=time.time()
-    fig_path = os.path.join(output_dir, 'iter_' + str(search_steps) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
+    fig_path = os.path.join(output_dir, 'iter_' + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/')
 
     # 根据输出数据目录是否存在，创建目录
     if not os.path.exists(fig_path):
@@ -84,7 +84,7 @@ if __name__ == '__main__':
                           node_num=node_num, upstream_arr=upstream_arr,  upstream_set=upstream_set,  graph=relabeled_G,
                          conn_dict=conn_dict)
 
-        evo = Evolution(problem, search_steps=search_steps, num_of_individuals=num_of_individuals,
+        evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,
                         new_plans_num=new_plans_num, fig_path=fig_path)
 
         evo.evolve()
