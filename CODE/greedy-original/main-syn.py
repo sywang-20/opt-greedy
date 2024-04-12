@@ -90,7 +90,7 @@ if __name__=='__main__':
                           node_num=node_num, upstream_arr=upstream_arr,
                          upstream_set=upstream_set,graph=relabeled_G,conn_dict=conn_dict)
 
-        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_original/'+str(size)+'/'+str(i)+'/'
+        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_original/'+str(size)+'/'+str(i)+'/'+'max_sensor_' + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+'/'
 
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
