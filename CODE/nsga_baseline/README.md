@@ -22,7 +22,7 @@ date
 # commmand 
 cd /lustre1/g/upad_yzhou/SSP_PACKUP/CODE/nsga_baseline
 # 修改main.py中的参数，运行main.py进行计算
-python main.py --mp 0.8 --cp 0.05 --iter 5 --upbound 100 --cc 0
+python main-real.py --mp 0.8 --cp 0.05 --iter 5 --upbound 100 --cc 0
 
 ```
 
