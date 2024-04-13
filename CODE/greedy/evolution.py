@@ -102,9 +102,9 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-                print('number of neighbors: '+str(len(neighbors)))
+                # print('number of neighbors: '+str(len(neighbors)))
                 neighbors=self.utils.duplication_elimination(neighbors) # 去重
-                print('number of neighbors-no-duplication: '+str(len(neighbors)))
+                # print('number of neighbors-no-duplication: '+str(len(neighbors)))
 
 
                 #------fast nondominated sorting选取每个iteration保存下来的解-----------
@@ -134,7 +134,7 @@ class Evolution:
                 new_population.extend(
                     neighbors.fronts[front_num][0:self.num_of_individuals - len(new_population)])  # 把符合数量要求的solution加进去
                 
-                print('new population len-for final solution:' + str(len(new_population)))
+                # print('new population len-for final solution:' + str(len(new_population)))
                 #print('neighbors len-before adding to final solution:' + str(len(neighbors)))
                 # --------每个iteration的Lmax个解选择完毕
 
@@ -143,19 +143,23 @@ class Evolution:
                 #to_remove = Population()
                 for ind in new_population:
                     if ind.constraint[0]==self.max_sensor and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
-                        print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
+                        # print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
                         population_final.append(ind)
-                        #to_remove.append(ind)
                         neighbors.remove(ind)
-                        print('final population len:' + str(len(population_final)))
+                        # print('final population len:' + str(len(population_final)))
 
-                # for ind in to_remove:
-                #     neighbors.remove(ind)
+                # print('neighbors len-after removing final solution:' + str(len(neighbors)))
 
-                print('neighbors len-after removing final solution:' + str(len(neighbors)))
+                # 去掉放入final solution的解，剩下的解中，已经有100个sensor的解淘汰掉
+                to_remove=Population()
+                for ind in neighbors:
+                    if ind.constraint[0]==self.max_sensor:
+                        to_remove.append(ind)
 
+                for ind in to_remove:
+                    neighbors.remove(ind)
 
-                # 去掉放入final solution的解，剩下的解选择num_of_individuals个加入下一步的population-->补齐Lmax个解！
+                # 去掉放入final solution的解以及淘汰的100个sensor的解，剩下的解选择num_of_individuals个加入下一步的population-->补齐Lmax个解！
                 self.utils.fast_nondominated_sort(neighbors)
                 cnt = 0
                 for front in neighbors.fronts:
@@ -183,7 +187,7 @@ class Evolution:
                 # 得到一个新的population
                 self.population = new_population2  
                 
-                print('neighbors len-adding to next step:' + str(len(self.population)))
+                # print('neighbors len-adding to next step:' + str(len(self.population)))
 
 
                 population_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
