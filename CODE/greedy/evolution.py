@@ -135,7 +135,7 @@ class Evolution:
                     neighbors.fronts[front_num][0:self.num_of_individuals - len(new_population)])  # 把符合数量要求的solution加进去
                 
                 print('new population len-for final solution:' + str(len(new_population)))
-                print('neighbors len-before adding to final solution:' + str(len(self.population)))
+                #print('neighbors len-before adding to final solution:' + str(len(neighbors)))
                 # --------每个iteration的Lmax个解选择完毕
 
 
@@ -145,7 +145,7 @@ class Evolution:
                     if ind.constraint[0]==self.max_sensor and len(population_final)<self.num_of_individuals:  # sensor number达到上限的solution
                         print(ind.constraint[0],ind.objectives[0],ind.objectives[1],ind.positive_nodes)
                         population_final.append(ind)
-                        # to_remove.append(ind)
+                        #to_remove.append(ind)
                         neighbors.remove(ind)
                         print('final population len:' + str(len(population_final)))
 
@@ -183,7 +183,7 @@ class Evolution:
                 # 得到一个新的population
                 self.population = new_population2  
                 
-                print('neighbors len-adding to next step:' + str(len(neighbors)))
+                print('neighbors len-adding to next step:' + str(len(self.population)))
 
 
                 population_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
