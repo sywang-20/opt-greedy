@@ -47,3 +47,11 @@ test different values of 'new_plans' in the evolutionary greedy algorithm, and c
 
 ## real-world case
 *RQ 3: how can the evolutionary greedy algorithm be applied to solve the real-world problem?*
+
+
+## Experiment Record
+4.13 Synthetic Case test
+* original greedy: reserve 20 plans in each step
+* new greedy: reserve 20 plans, create 5 new plans from one plan in each step
+* test the code for all synthetic networks with different sizes, but only choose one for one size
+
