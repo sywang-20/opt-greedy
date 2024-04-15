@@ -76,6 +76,15 @@ class Problem:
         #     individual.chromosome[i]=1
         return individual
 
+    def generate_individual_supplement(self,n):
+        # n: sensor number的最大值
+        individual=Individual(self.node_num)
+        positive_num=random.randint(1,n)
+        positive_nodes=random.sample(list(range(self.node_num)),positive_num)
+        individual.positive_nodes=positive_nodes
+        for i in positive_nodes:
+            individual.chromosome[i]=1
+        return individual
 
     def generate_individual(self):
         """

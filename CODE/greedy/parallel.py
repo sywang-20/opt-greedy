@@ -18,9 +18,9 @@ def run_case_size(size):
 #     return [num_of_individuals,size,new_plans_num]
 
 if __name__ == '__main__':
-    #size = list(range(100, 2100, 100))
-    #size.extend([2500, 3000])
-    size=[100,200]
+    # size = list(range(100, 2100, 100))
+    # size.extend([2500, 3000])
+    size=[100]
 
     print(size)
     cpu_count = os.cpu_count()

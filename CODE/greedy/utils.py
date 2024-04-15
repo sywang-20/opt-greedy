@@ -42,6 +42,17 @@ class NSGA2Utils:
             population.append(individual)
         return population
 
+    def population_supplement(self,num_individual,n):
+        # num_individual: 需要新生成的solution数量
+        # n：每个solution里sensor的数量
+        population=Population()
+        for i in range(num_individual):
+            individual=self.problem.generate_individual_supplement(n)
+            self.problem.calculate_objectives(individual)
+            self.problem.calculate_constraint(individual)
+            population.append(individual)
+        return population
+
 
     def fast_nondominated_sort(self, population):
         # 根据objective function进行sorting
