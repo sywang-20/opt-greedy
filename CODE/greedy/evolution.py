@@ -118,12 +118,13 @@ class Evolution:
 
 
                 #------剩下front的解中，已经有100个sensor的解淘汰掉------
-                front_num = 1
-                while front_num <= cnt:
-                    for ind in neighbors.fronts[front_num]:
-                        if ind.constraint[0] == self.max_sensor:
-                            to_remove.append(ind)
-                    front_num += 1
+                if cnt > 1:
+                    front_num = 1
+                    while front_num < cnt:
+                        for ind in neighbors.fronts[front_num]:
+                            if ind.constraint[0] == self.max_sensor:
+                                to_remove.append(ind)
+                        front_num += 1
 
                 for ind in to_remove:
                     neighbors.remove(ind)
