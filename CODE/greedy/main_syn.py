@@ -24,7 +24,7 @@ import time
 def run_case(size):
     max_sensor = int(size / 10)
     num_of_individuals=20
-    new_plans_num=5
+    new_plans_num=30
     case_dir = "../../DATA/synthetic_network/" + str(size) + "/"
     # # 数一下这个size下有多少个不同网络。若使用这个，则是遍历所有同一size的synthetic network
     # count = 0
