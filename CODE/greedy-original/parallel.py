@@ -3,7 +3,7 @@
 from multiprocessing import Pool
 import pandas as pd
 import os
-from not_used_main_syn import run_case
+# from not_used_main_syn import run_case
 from main_syn import run_case
 
 def run_case_size(size):
