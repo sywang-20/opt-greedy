@@ -103,28 +103,33 @@ class Evolution:
 
                 #------分析front 0中的解，满足constraint的保留到final solution，并去掉。--------
                 to_remove = Population()
+                to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
                 # 满足constraint的solution超过num_of_individual？
                 num_sol = sum(1 for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
                 remaining_space = self.num_of_individuals - len(population_final)
 
                 if num_sol+len(population_final) <= self.num_of_individuals:
                     population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
-                    to_remove.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
+                    #to_remove.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
                 else:
                     self.utils.calculate_crowding_distance(neighbors.fronts[0])
                     neighbors.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
-                    population_final.extend(neighbors.fronts[0][:remaining_space])
-                    to_remove.extend(neighbors.fronts[0][:remaining_space])
+
+                    count_to_add=0
+                    for ind in neighbors.fronts[0]:
+                        if ind.constraint[0]==self.max_sensor and count_to_add < remaining_space:
+                            population_final.append(ind)
+                            count_to_add+=1
 
 
                 #------剩下front的解中，已经有100个sensor的解淘汰掉------
-                if cnt > 1:
-                    front_num = 1
-                    while front_num < cnt:
-                        for ind in neighbors.fronts[front_num]:
-                            if ind.constraint[0] == self.max_sensor:
-                                to_remove.append(ind)
-                        front_num += 1
+                # if cnt > 1:
+                #     front_num = 1
+                #     while front_num < cnt:
+                #         for ind in neighbors.fronts[front_num]:
+                #             if ind.constraint[0] == self.max_sensor:
+                #                 to_remove.append(ind)
+                #         front_num += 1
 
                 for ind in to_remove:
                     neighbors.remove(ind)
