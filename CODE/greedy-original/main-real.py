@@ -48,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--datadir", type=str, default="../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
     parser.add_argument("--outdir", type=str,
-                        default="../../TESTOUTPUT/real_world_case/greedy_original/")  # 对应输出结果的保存目录
+                        default="../../TESTOUTPUT/real_case/greedy_original/")  # 对应输出结果的保存目录
 
     args = parser.parse_args()
 
