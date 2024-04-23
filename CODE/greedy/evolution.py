@@ -69,6 +69,7 @@ class Evolution:
             os.makedirs(fig_path)
         # 创建一个空的population用于保存最终解
         population_final = Population()
+        population_final_front0=Population()
 
         # 初始化一个空的population
         self.population = self.utils.create_initial_population()
@@ -82,7 +83,7 @@ class Evolution:
         print('number of new plans generated from one plan: '+str(self.new_plans_num))
 
         while True:
-            if len(population_final) >= self.num_of_individuals:  # stopping criteria： 最终解的数量超过规定数
+            if len(population_final_front0) >= self.num_of_individuals:  # stopping criteria： 最终解在front 0的数量超过规定数
                 break
             else:
                 neighbors = Population()
@@ -91,7 +92,11 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
+                print('St and St_new:',len(neighbors))
+
                 neighbors=self.utils.duplication_elimination(neighbors) # 去重
+
+                print('St and St_new no duplication:',len(neighbors))
 
                 #------fast nondominated sorting选取每个iteration保存下来的解-----------
                 self.utils.fast_nondominated_sort(neighbors)
@@ -104,37 +109,54 @@ class Evolution:
                 #------分析front 0中的解，满足constraint的保留到final solution，并去掉。--------
                 to_remove = Population()
                 to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
-                # 满足constraint的solution超过num_of_individual？
-                num_sol = sum(1 for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
-                remaining_space = self.num_of_individuals - len(population_final)
+                population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
 
-                if num_sol+len(population_final) <= self.num_of_individuals:
-                    population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
-                    #to_remove.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
-                else:
-                    self.utils.calculate_crowding_distance(neighbors.fronts[0])
-                    neighbors.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
-
-                    count_to_add=0
-                    for ind in neighbors.fronts[0]:
-                        if ind.constraint[0]==self.max_sensor and count_to_add < remaining_space:
-                            population_final.append(ind)
-                            count_to_add+=1
-
-
-                #------剩下front的解中，已经有100个sensor的解淘汰掉------
-                # if cnt > 1:
-                #     front_num = 1
-                #     while front_num < cnt:
-                #         for ind in neighbors.fronts[front_num]:
-                #             if ind.constraint[0] == self.max_sensor:
-                #                 to_remove.append(ind)
-                #         front_num += 1
+                print('population_final:',len(population_final))
 
                 for ind in to_remove:
                     neighbors.remove(ind)
 
+
+                # # 满足constraint的solution超过num_of_individual？
+                # num_sol = sum(1 for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
+                # remaining_space = self.num_of_individuals - len(population_final)
+                #
+                # if num_sol+len(population_final) <= self.num_of_individuals:
+                #     population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
+                #     #to_remove.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
+                # else:
+                #     self.utils.calculate_crowding_distance(neighbors.fronts[0])
+                #     neighbors.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
+                #
+                #     count_to_add=0
+                #     for ind in neighbors.fronts[0]:
+                #         if ind.constraint[0]==self.max_sensor and count_to_add < remaining_space:
+                #             population_final.append(ind)
+                #             count_to_add+=1
+
+
+
+                # 最终的解是population_final的front0的
+                self.utils.fast_nondominated_sort(population_final)
+                cnt = 0
+                for front in population_final.fronts:
+                    self.utils.calculate_crowding_distance(front)
+                    cnt += 1
+
+                if len(population_final.fronts[0]) >= self.num_of_individuals:
+                    self.utils.calculate_crowding_distance(population_final.fronts[0])
+                    population_final.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
+                    population_final_front0.extend(population_final.fronts[0][0:self.num_of_individuals])
+                    print('population_final_front0:',len(population_final_front0))
+                # else:
+                #     continue
+
+
+
+
                 #------check余下的解是否比Lmax多-------
+                print('get solution for next iteration')
+
                 if len(neighbors)<=self.num_of_individuals:
                     self.population = neighbors
                     # generate新的individual，放的sensor的数量和最大的一样多
@@ -181,7 +203,7 @@ class Evolution:
             i=i+1
 
         # 最终的满足constraint的解
-        final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final]
+        final_solutions_dict = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in population_final_front0]
 
 
         # 中间过程每一个iteration保存下来的解
