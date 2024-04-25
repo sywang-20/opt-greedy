@@ -92,11 +92,11 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-                print('St and St_new:',len(neighbors))
+                # print('St and St_new:',len(neighbors))
 
                 neighbors=self.utils.duplication_elimination(neighbors) # 去重
 
-                print('St and St_new no duplication:',len(neighbors))
+                # print('St and St_new no duplication:',len(neighbors))
 
                 #------fast nondominated sorting选取每个iteration保存下来的解-----------
                 self.utils.fast_nondominated_sort(neighbors)
@@ -111,7 +111,7 @@ class Evolution:
                 to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
                 population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
 
-                print('population_final:',len(population_final))
+                # print('population_final:',len(population_final))
 
                 for ind in to_remove:
                     neighbors.remove(ind)
@@ -147,7 +147,7 @@ class Evolution:
                     self.utils.calculate_crowding_distance(population_final.fronts[0])
                     population_final.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
                     population_final_front0.extend(population_final.fronts[0][0:self.num_of_individuals])
-                    print('population_final_front0:',len(population_final_front0))
+                    # print('population_final_front0:',len(population_final_front0))
                 # else:
                 #     continue
 
@@ -155,7 +155,7 @@ class Evolution:
 
 
                 #------check余下的解是否比Lmax多-------
-                print('get solution for next iteration')
+                # print('get solution for next iteration')
 
                 if len(neighbors)<=self.num_of_individuals:
                     self.population = neighbors
