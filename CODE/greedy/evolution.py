@@ -138,10 +138,7 @@ class Evolution:
 
                 # 最终的解是population_final的front0的
                 self.utils.fast_nondominated_sort(population_final)
-                cnt = 0
-                for front in population_final.fronts:
-                    self.utils.calculate_crowding_distance(front)
-                    cnt += 1
+
 
                 if len(population_final.fronts[0]) >= self.num_of_individuals:
                     self.utils.calculate_crowding_distance(population_final.fronts[0])
