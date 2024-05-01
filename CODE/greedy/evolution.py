@@ -88,9 +88,9 @@ class Evolution:
             else:
                 neighbors = Population()
                 for j in self.population:
-                    j_neighbor = self.utils.problem.create_individual_one_more_sensor(j,self.new_plans_num)
+                    j_neighbors = self.utils.problem.create_individual_one_more_sensor(j, self.new_plans_num)
                     neighbors.append(j)
-                    neighbors.extend(j_neighbor)
+                    neighbors.extend(j_neighbors)
 
                 # print('St and St_new:',len(neighbors))
 
