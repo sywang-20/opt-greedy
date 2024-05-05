@@ -83,7 +83,7 @@ class Evolution:
         print('number of new plans generated from one plan: '+str(self.new_plans_num))
 
         while True:
-            if len(population_final_front0) >= self.num_of_individuals:  # stopping criteria： 最终解在front 0的数量超过规定数
+            if len(population_final_front0) == self.num_of_individuals:  # stopping criteria： 最终解在front 0的数量超过规定数。提取出相应数量的解，所以应该是==
                 break
             else:
                 neighbors = Population()
