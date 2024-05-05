@@ -145,7 +145,7 @@ class Evolution:
                 # 最终的解是population_final的front0的
                 self.utils.fast_nondominated_sort(population_final)
 
-
+                # final solution candidate set中front 0 的解的数量超过想要的solution的数量，则取出这个解，放到population_final_front0中，然后停止loop
                 if len(population_final.fronts[0]) >= self.num_of_individuals:
                     self.utils.calculate_crowding_distance(population_final.fronts[0])
                     population_final.fronts[0].sort(key=lambda individual: individual.crowding_distance,reverse=True)
