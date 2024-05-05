@@ -135,7 +135,11 @@ class Evolution:
                         self.utils.calculate_crowding_distance(front)
                     # 按照domination_count从小到大，crowding_distance从大到小进行排序 (domination_count表示一个solution被其他solution所支配的次数)
                     neighbors.population.sort(key=lambda individual: (individual.domination_count, -individual.crowding_distance))
-                    self.population = neighbors.population[0:self.num_of_individuals]
+
+                    new_population=Population()
+                    new_population.extend(neighbors.population[0:self.num_of_individuals])
+                    self.population = new_population
+
 
                 # 记录每个iteration开始的solution，即上一个iteration的最终solution
                 population_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
