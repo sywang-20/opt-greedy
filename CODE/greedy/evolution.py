@@ -99,20 +99,26 @@ class Evolution:
                 # print('St and St_new no duplication:',len(neighbors))
 
                 #------fast nondominated sorting选取每个iteration保存下来的解-----------
-                self.utils.fast_nondominated_sort(neighbors)
-
-                cnt = 0
-                for front in neighbors.fronts:
-                    self.utils.calculate_crowding_distance(front)
-                    cnt += 1
-
-                #------分析front 0中的解，满足constraint的保留到final solution，并去掉。--------
+                # 先过constraint
                 to_remove = Population()
                 to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
-                population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
+                # 对满足constraint的进行sorting
+                self.utils.fast_nondominated_sort(to_remove)
+                # front 0的解放到final solution candidate set
+                population_final.extend(to_remove.fronts[0])
+
+
+
+
+
+
+                #------分析front 0中的解，满足constraint的保留到final solution，并去掉。--------
+                # to_remove = Population()
+                # to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
+                # population_final.extend(ind for ind in neighbors.fronts[0] if ind.constraint[0] == self.max_sensor)
 
                 # print('population_final:',len(population_final))
-
+                # 把满足constraint的全部删除
                 for ind in to_remove:
                     neighbors.remove(ind)
 
