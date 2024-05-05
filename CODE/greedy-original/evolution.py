@@ -136,10 +136,10 @@ class Evolution:
                 #------fast non-dominated sorting，进行Lmax个解的选择----------
                 self.utils.fast_nondominated_sort(neighbors)
 
-                cnt = 0
-                for front in neighbors.fronts:
-                    self.utils.calculate_crowding_distance(front)
-                    cnt += 1
+                # cnt = 0
+                # for front in neighbors.fronts:
+                #     self.utils.calculate_crowding_distance(front)
+                #     cnt += 1
 
                 # 生成一个空的新population class用于保存non-dominated sorting后选取的结果，并初始化front数为0
                 new_population = Population()
