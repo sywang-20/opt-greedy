@@ -92,11 +92,11 @@ class Evolution:
                     neighbors.append(j)
                     neighbors.extend(j_neighbor)
 
-                # print('St and St_new:',len(neighbors))
+                print('St and St_new:',len(neighbors))
 
                 neighbors=self.utils.duplication_elimination(neighbors) # 去重
 
-                # print('St and St_new no duplication:',len(neighbors))
+                print('St and St_new no duplication:',len(neighbors))
 
                 #------fast nondominated sorting选取每个iteration保存下来的解-----------
                 # 先过constraint
@@ -106,6 +106,8 @@ class Evolution:
                 self.utils.fast_nondominated_sort(to_remove)
                 # front 0的解放到final solution candidate set
                 population_final.extend(to_remove.fronts[0])
+
+                print('to_remove, population_final:', len(to_remove),len(population_final))
 
 
 
@@ -121,6 +123,8 @@ class Evolution:
                 # 把满足constraint的全部删除
                 for ind in to_remove:
                     neighbors.remove(ind)
+
+                print('len of neighbors:',len(neighbors))
 
 
                 # # 满足constraint的solution超过num_of_individual？
@@ -170,32 +174,43 @@ class Evolution:
                     self.population.extend(pop_supplement)
 
                 else:
+                    # 计算front_num和crowding distance
                     self.utils.fast_nondominated_sort(neighbors)
-                    cnt = 0
                     for front in neighbors.fronts:
                         self.utils.calculate_crowding_distance(front)
-                        cnt += 1
+                    # 按照domination_count从小到大，crowding_distance从大到小进行排序 (domination_count表示一个solution被其他solution所支配的次数)
+                    neighbors.population.sort(key=lambda individual: (individual.domination_count, -individual.crowding_distance))
+                    self.population = neighbors.population[0:self.num_of_individuals]
+                    # cnt = 0
+                    # for front in neighbors.fronts:
+                    #     self.utils.calculate_crowding_distance(front)
+                    #     cnt += 1
 
                     # 生成一个空的新population class用于保存non-dominated sorting后选取的结果，并初始化front数为0
-                    new_population = Population()
-                    front_num = 0
+                    # new_population = Population()
+                    # new_population.extend(neighbors.population[0:self.num_of_individuals])
 
-                # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
-                    while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
-                        print('loop')
-                        self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
-                        new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
-                        front_num += 1  # 更新front
-                        print(front_num)
 
-                    print('final front num', front_num)  # 第一个不满足while判断的front，可能只有部分可以加进去
-                    self.utils.calculate_crowding_distance(neighbors.fronts[front_num])  # 对这个front的crowding distance进行计算
-                    neighbors.fronts[front_num].sort(key=lambda individual: individual.crowding_distance,
-                                                 reverse=True)  # 计算了crowding distance后，对其进行排序
-                    new_population.extend(
-                        neighbors.fronts[front_num][0:self.num_of_individuals - len(new_population)])  # 把符合数量要求的solution加进去
 
-                    self.population=new_population
+
+                #     front_num = 0
+                #
+                # # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
+                #     while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
+                #         print('loop')
+                #         self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
+                #         new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
+                #         front_num += 1  # 更新front
+                #         print(front_num)
+                #
+                #     print('final front num', front_num)  # 第一个不满足while判断的front，可能只有部分可以加进去
+                #     self.utils.calculate_crowding_distance(neighbors.fronts[front_num])  # 对这个front的crowding distance进行计算
+                #     neighbors.fronts[front_num].sort(key=lambda individual: individual.crowding_distance,
+                #                                  reverse=True)  # 计算了crowding distance后，对其进行排序
+                #     new_population.extend(
+                #         neighbors.fronts[front_num][0:self.num_of_individuals - len(new_population)])  # 把符合数量要求的solution加进去
+                #
+                #     self.population=new_population
 
 
 
