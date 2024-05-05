@@ -160,7 +160,7 @@ class Evolution:
                 #------check余下的解是否比Lmax多-------
                 # print('get solution for next iteration')
 
-                if len(neighbors)<=self.num_of_individuals:
+                if len(neighbors) < self.num_of_individuals:
                     self.population = neighbors
                     # generate新的individual，放的sensor的数量和最大的一样多
                     n_to_generate = self.num_of_individuals - len(neighbors)
