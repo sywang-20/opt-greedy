@@ -100,12 +100,13 @@ class Evolution:
                 to_remove = Population()
                 to_remove.extend(ind for ind in neighbors if ind.constraint[0] == self.max_sensor)
                 # 对满足constraint的进行sorting
-                if len(to_remove) != 0:
-                    self.utils.fast_nondominated_sort(to_remove)
-                    population_final.extend(to_remove.fronts[0])
+                self.utils.fast_nondominated_sort(to_remove)
+                # front 0的解放到final solution candidate set
+                population_final.extend(to_remove.fronts[0])
 
-                    for ind in to_remove:
-                        neighbors.remove(ind)
+
+                for ind in to_remove:
+                    neighbors.remove(ind)
 
                 # 最终的解是population_final的front0的
                 self.utils.fast_nondominated_sort(population_final)
