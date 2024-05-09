@@ -63,7 +63,6 @@ class Evolution:
 
                 neighbors = self.utils.duplication_elimination(neighbors)  # 去重
 
-
                 # ------fast nondominated sorting选取每个iteration保存下来的解-----------
                 self.utils.fast_nondominated_sort(neighbors)
 
@@ -92,6 +91,8 @@ class Evolution:
                     n_positive_nodes = np.max(total_sensor_num)  # sensor数量的最大值
                     pop_supplement = self.utils.population_supplement(n_to_generate,n_positive_nodes)  # 生成sensor数量比目前最大sensor数量小的solution
                     self.population.extend(pop_supplement)
+                elif len(neighbors) == self.num_of_individuals:
+                    self.population = neighbors
                 else:
                     self.utils.fast_nondominated_sort(neighbors)
                     new_population = Population()
@@ -99,7 +100,7 @@ class Evolution:
 
                     # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
                     while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
-                        self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
+                        # self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
                         new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
                         front_num += 1  # 更新front
                         print(front_num)
@@ -189,7 +190,8 @@ class Evolution:
                     n_positive_nodes = np.max(total_sensor_num) # sensor数量的最大值
                     pop_supplement = self.utils.population_supplement(n_to_generate, n_positive_nodes) # 生成sensor数量比目前最大sensor数量小的solution
                     self.population.extend(pop_supplement)
-
+                elif len(neighbors) == self.num_of_individuals:
+                    self.population = neighbors
                 else:
                     self.utils.fast_nondominated_sort(neighbors)
                     new_population = Population()
@@ -197,7 +199,7 @@ class Evolution:
 
                     # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
                     while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
-                        self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
+                        #self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
                         new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
                         front_num += 1  # 更新front
                         print(front_num)
@@ -258,7 +260,7 @@ class Evolution:
 
                 # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
                 while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
-                    self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
+                    # self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
                     new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
                     front_num += 1  # 更新front
                     print(front_num)

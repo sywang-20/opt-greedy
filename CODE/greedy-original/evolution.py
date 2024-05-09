@@ -62,7 +62,7 @@ class Evolution:
 
                 # 前一步选取出来的solution，加上目前该front的数，比想要的solution总数小，把这个front的解全部加进去
                 while len(new_population) + len(neighbors.fronts[front_num]) <= self.num_of_individuals:
-                    self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
+                    # self.utils.calculate_crowding_distance(neighbors.fronts[front_num])
                     new_population.extend(neighbors.fronts[front_num])  # 把这个front全部加进去
                     front_num += 1  # 更新front
                     print(front_num)
