@@ -279,6 +279,76 @@ class Evolution:
         with open(self.fig_path + '/solution.pkl', 'wb') as f:
             pickle.dump(solutions_dict, f)
 
+    def evolve_coverage(self):
+        fig_path = self.fig_path
+        if not os.path.exists(fig_path):
+            os.makedirs(fig_path)
+        self.population = self.utils.create_initial_population()
+
+        solutions_dict = {}
+        i = 0
+        print('evolve-coverage')
+        print('sensor number upper bound: ' + str(self.max_sensor))
+        print('reserved number of plans at each iteration: ' + str(self.num_of_individuals))
+
+        while True:
+            if i >= self.max_sensor:
+                break
+            else:
+                neighbors = Population()
+                for j in self.population:
+                    j_neighbor = self.utils.problem.create_individual_one_more_sensor_all(j)
+                    neighbors.extend(j_neighbor)
+
+                neighbors = self.utils.duplication_elimination(neighbors)
+
+                # ------根据其中一个objective function进行sorting，然后选取前N个----------
+                neighbors.population.sort(key=lambda individual: individual.objectives[0]) #objective 0: coverage
+                new_population=Population()
+                new_population.extend(neighbors.population[0:self.num_of_individuals])
+                self.population=new_population
+
+                solutions_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
+                                     self.population]
+            i = i + 1
+        with open(self.fig_path + '/solution.pkl', 'wb') as f:
+            pickle.dump(solutions_dict, f)
+
+    def evolve_search_cost(self):
+        fig_path = self.fig_path
+        if not os.path.exists(fig_path):
+            os.makedirs(fig_path)
+        self.population = self.utils.create_initial_population()
+
+        solutions_dict = {}
+        i = 0
+        print('evolve-search-cost')
+        print('sensor number upper bound: ' + str(self.max_sensor))
+        print('reserved number of plans at each iteration: ' + str(self.num_of_individuals))
+
+        while True:
+            if i >= self.max_sensor:
+                break
+            else:
+                neighbors = Population()
+                for j in self.population:
+                    j_neighbor = self.utils.problem.create_individual_one_more_sensor_all(j)
+                    neighbors.extend(j_neighbor)
+
+                neighbors = self.utils.duplication_elimination(neighbors)
+
+                # ------根据其中一个objective function进行sorting，然后选取前N个----------
+                neighbors.population.sort(key=lambda individual: individual.objectives[1]) #objective 0: coverage
+                new_population=Population()
+                new_population.extend(neighbors.population[0:self.num_of_individuals])
+                self.population=new_population
+
+                solutions_dict[i] = [[i.constraint[0], i.objectives[0], i.objectives[1], i.positive_nodes] for i in
+                                     self.population]
+            i = i + 1
+        with open(self.fig_path + '/solution.pkl', 'wb') as f:
+            pickle.dump(solutions_dict, f)
+
     # calculate the objective function for one specific placement
     def evolve_new_syn(self):
         # calculate the objective function for one specific placement
