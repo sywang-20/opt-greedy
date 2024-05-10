@@ -43,6 +43,15 @@ class Problem:
             individual.chromosome[i]=1
         return individual
 
+    def generate_individual_n(self, positive_num):
+        individual = Individual(self.node_num)
+        positive_nodes = random.sample(list(range(self.node_num)), positive_num)
+        individual.positive_nodes = positive_nodes
+
+        for i in positive_nodes:
+            individual.chromosome[i] = 1
+        return individual
+
     def generate_individual_with(self,individual1):
         '''
         create a copy of an Individual

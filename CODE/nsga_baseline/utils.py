@@ -80,18 +80,24 @@ class NSGA2Utils:
         return population
 
 
-    def create_initial_population_new(self):
+    def create_initial_population_new(self,positive_num):
         # 初始化individual加一些限制
         population = Population()
-        count=0
-        constrained_coverage = self.problem.node_num * self.problem.coverage_constrain
-        while count < self.num_of_individuals:
-            individual = self.problem.generate_individual()
+        for i in range(self.num_of_individuals):
+            individual = self.problem.generate_individual_n(positive_num)
             self.problem.calculate_objectives(individual)
-            if np.abs(individual.objectives[1])>constrained_coverage:
-                population.append(individual)
-                count+=1
+            population.append(individual)
         return population
+
+        # count=0
+        # constrained_coverage = self.problem.node_num * self.problem.coverage_constrain
+        # while count < self.num_of_individuals:
+        #     individual = self.problem.generate_individual()
+        #     self.problem.calculate_objectives(individual)
+        #     if np.abs(individual.objectives[1])>constrained_coverage:
+        #         population.append(individual)
+        #         count+=1
+        # return population
 
 
     def fast_nondominated_sort(self, population):

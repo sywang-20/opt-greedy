@@ -20,7 +20,7 @@ import pickle
 class Evolution:
 
     def __init__(self, problem, node_num, num_of_generations=60, num_of_individuals=200, num_of_tour_particips=2,
-                 tournament_prob=0.8, crossover_param=0.8, mutation_param=0.8, input_fn='', fig_path='./output/',save_path='./output',sol={}):
+                 tournament_prob=0.8, crossover_param=0.8, mutation_param=0.8, positive_num=100, input_fn='', fig_path='./output/',save_path='./output',sol={}):
         # print('init Evolution')
         self.utils = NSGA2Utils(problem, num_of_individuals, num_of_tour_particips, tournament_prob, crossover_param,
                                 mutation_param)
@@ -33,100 +33,14 @@ class Evolution:
         self.input_fn = input_fn
         self.sol=sol
         self.save_path=save_path
-
-
-    # calculate the objective function for one specific placement
-    def evolve_new_syn(self):
-        # calculate the objective function for one specific placement
-        solution_obj = {}
-        temp=[]
-        solution_temp = self.utils.problem.generate_individual_with_positive_nodes(self.sol)
-        # print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
-        temp.append([solution_temp.objectives[0], solution_temp.objectives[1], solution_temp.objectives[2]])
-        print(temp)
-
-        print(solution_obj)
-
-        save_path = self.save_path
-        with open(save_path, 'wb') as f:
-            pickle.dump(solution_obj, f)
-        return solution_obj
-
-
-    def evolve_new_single(self):
-        # calculate the objective function for one specific placement
-        solution_obj = {}
-        temp=[]
-        solution_temp = self.utils.problem.generate_individual_with_positive_nodes(self.sol)
-        # print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
-        temp.append([solution_temp.objectives[0], solution_temp.objectives[1], solution_temp.objectives[2]])
-        print(temp)
-
-        print(solution_obj)
-
-    def evolve_new(self):
-        # calculate the objective function for one specific placement
-        solution_obj={}
-        to_cal = ['indegree', 'outdegree','upstream_size', 'closeness_centrality', 'betweenness_centrality','katz_centrality','random']
-        #to_cal=['random']
-        for x in to_cal:
-            temp = []
-            for ind in self.sol[x]:
-                #print(ind)
-                solution_temp= self.utils.problem.generate_individual_with_positive_nodes(ind)
-                #print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
-                temp.append([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
-                print(temp)
-
-            solution_obj[x]=temp
-
-            print(solution_obj)
-
-        save_path=self.save_path
-        with open(save_path, 'wb') as f:
-            pickle.dump(solution_obj, f)
-        return solution_obj
+        self.positive_num=positive_num
 
 
     # @profile
     def evolve(self):
-        # begin=time.time()
-        print('begin')
-        if self.input_fn == "":
-            print('Creating new initial population...')
-            self.population = self.utils.create_initial_population_new()   # 初始化加coverage的限制
-        else:
-            print('Loading existing initial population from...')
-            print('   filepath: {}'.format(self.input_fn))
-            self.population = self.utils.load_initial_population(self.input_fn, self.node_num) # allows loading existing initialized population
-        
-        self.utils.fast_nondominated_sort(self.population)
-
-        # first_population=[i.positive_nodes for i in self.population]
-        first_population=[[i.objectives[0],i.objectives[1],i.objectives[2],i.positive_nodes] for i in self.population]
-        # print(first_population)
-
-        # json_str = json.dumps(first_population)
         fig_path=self.fig_path
-        # print(first_population)
-
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
-
-        with open(fig_path + '/first_population.pkl', 'wb') as fp:
-            pickle.dump(first_population,fp)
-            # json_file.write(json_str)
-
-        # print('1st front')
-        for front in self.population.fronts:
-            # print('calc dis')
-            self.utils.calculate_crowding_distance(front)
-        # print('create children')
-        # print('calc dis done')
-
-        # print('create children')
-        children = self.utils.create_children(self.population)   # 生成children时，对coverage加一些限制
-        # print('create children finish')
 
         returned_population = None
 
@@ -169,35 +83,36 @@ class Evolution:
 
         print('num_of_individials',self.num_of_individuals)
         print('initial front 0',len(self.population.fronts[0]) / self.num_of_individuals)
-        # add first popu in record, only record the first front
         front_percent.append(len(self.population.fronts[0]) / self.num_of_individuals)
-        # solutions_dict[0] = [[i.objectives[0],i.objectives[1],i.objectives[2],i.positive_nodes] for i in self.population.fronts[0]]
-        # population_dict[0]=[[i.objectives[0],i.objectives[1],i.objectives[2],i.positive_nodes] for i in self.population]
-        
     
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
-        # print(fig_path)
-        
-        # start iterations
-        # t = tqdm(range(1, self.num_of_generations+1))  # gen0 is init popu
+
+
         t = range(self.num_of_generations)
+        self.population = self.utils.create_initial_population_new(self.positive_num)
+        first_population = [[i.objectives[0], i.objectives[1], i.objectives[2], i.positive_nodes] for i in
+                            self.population]
+        with open(fig_path + '/first_population.pkl', 'wb') as fp:
+            pickle.dump(first_population,fp)
+
         for i in t:
-            print(i)
-            # begin_generate = time.time()
-            # print('extend children')
+            self.utils.fast_nondominated_sort(self.population)
+            for front in self.population.fronts:
+                self.utils.calculate_crowding_distance(front)
+
+            children = self.utils.create_children(self.population)
             self.population.extend(children)
-            print('population size',len(self.population))
             self.population=self.utils.duplication_elimination(self.population)
-            print('population size after duplication elimination',len(self.population))
+
 
             self.utils.fast_nondominated_sort(self.population)
-            # begin_new_pop = time.time()
+
             new_population = Population()
             front_num = 0
 
             while len(new_population) + len(self.population.fronts[front_num]) <= self.num_of_individuals:
-                self.utils.calculate_crowding_distance(self.population.fronts[front_num])
+                # self.utils.calculate_crowding_distance(self.population.fronts[front_num])
                 new_population.extend(self.population.fronts[front_num])
                 front_num += 1
 
@@ -209,19 +124,6 @@ class Evolution:
             # end_new_pop = time.time()
 
             self.utils.fast_nondominated_sort(self.population)
-
-            # front_sort_begin = time.time()
-
-            for front in self.population.fronts:
-                self.utils.calculate_crowding_distance(front)
-
-            children = self.utils.create_children(self.population)
-            
-            # end_generate = time.time()
-            # print( str(i)+"th "+"generation time: " + str(end_generate - begin_generate))
-           
-            #t.set_description('{0:3d} th Generation of '.format(i) + str(self.num_of_generations))   ## open with tqdm
-
 
             total_val1=[i.objectives[0] for i in self.population]
             total_val2 = [-i.objectives[1] for i in self.population]
@@ -343,3 +245,56 @@ class Evolution:
         print('len of front 0:',len(self.population.fronts[0]))
 
         return returned_population.fronts[0]
+
+
+    # calculate the objective function for one specific placement
+    def evolve_new_syn(self):
+        # calculate the objective function for one specific placement
+        solution_obj = {}
+        temp=[]
+        solution_temp = self.utils.problem.generate_individual_with_positive_nodes(self.sol)
+        # print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
+        temp.append([solution_temp.objectives[0], solution_temp.objectives[1], solution_temp.objectives[2]])
+        print(temp)
+
+        print(solution_obj)
+
+        save_path = self.save_path
+        with open(save_path, 'wb') as f:
+            pickle.dump(solution_obj, f)
+        return solution_obj
+
+
+    def evolve_new_single(self):
+        # calculate the objective function for one specific placement
+        solution_obj = {}
+        temp=[]
+        solution_temp = self.utils.problem.generate_individual_with_positive_nodes(self.sol)
+        # print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
+        temp.append([solution_temp.objectives[0], solution_temp.objectives[1], solution_temp.objectives[2]])
+        print(temp)
+
+        print(solution_obj)
+
+    def evolve_new(self):
+        # calculate the objective function for one specific placement
+        solution_obj={}
+        to_cal = ['indegree', 'outdegree','upstream_size', 'closeness_centrality', 'betweenness_centrality','katz_centrality','random']
+        #to_cal=['random']
+        for x in to_cal:
+            temp = []
+            for ind in self.sol[x]:
+                #print(ind)
+                solution_temp= self.utils.problem.generate_individual_with_positive_nodes(ind)
+                #print([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
+                temp.append([solution_temp.objectives[0],solution_temp.objectives[1],solution_temp.objectives[2]])
+                print(temp)
+
+            solution_obj[x]=temp
+
+            print(solution_obj)
+
+        save_path=self.save_path
+        with open(save_path, 'wb') as f:
+            pickle.dump(solution_obj, f)
+        return solution_obj
