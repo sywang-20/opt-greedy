@@ -63,8 +63,22 @@ def run_case(size):
                           node_num=node_num, upstream_arr=upstream_arr,
                           upstream_set=upstream_set, graph=relabeled_G, conn_dict=conn_dict)
 
-        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new/' + str(size) + '/' + str(i) + '/' + 'max_sensor_' \
-                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/'
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new_no_filter/' + str(size) + '/' + str(i) + '/' + 'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new_filter/'+str(size)+'/'+str(i)+'/'+'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+ '_new_plans_' + str(new_plans_num)+'/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_no_combination/' + str(size) + '/' + str(i) + '/' + 'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_coverage/' + str(size) + '/' + str(
+        #     i) + '/' + 'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals) +  '/' # '_new_plans_' + str(new_plans_num) +
+
+        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_search_cost/' + str(size) + '/' + str(
+            i) + '/' + 'max_sensor_' \
+                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '/'
 
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
@@ -78,7 +92,11 @@ def run_case(size):
 
         print("start")
         start = time.time()
-        solution = evo.evolve()
+        #solution = evo.evolve_no_filter()
+        #solution = evo.evolve_filter()
+        #solution = evo.evolve_no_combination()
+        #solution=evo.evolve_coverage()
+        solution=evo.evolve_search_cost()
         end = time.time()
 
         with open(os.path.join(fig_path, "time.txt"), "w") as tf:

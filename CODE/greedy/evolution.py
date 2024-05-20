@@ -295,12 +295,14 @@ class Evolution:
             if i >= self.max_sensor:
                 break
             else:
+                print('iteration:',i)
                 neighbors = Population()
                 for j in self.population:
                     j_neighbor = self.utils.problem.create_individual_one_more_sensor_all(j)
                     neighbors.extend(j_neighbor)
 
                 neighbors = self.utils.duplication_elimination(neighbors)
+                print('finish generating new population')
 
                 # ------根据其中一个objective function进行sorting，然后选取前N个----------
                 neighbors.population.sort(key=lambda individual: individual.objectives[0]) #objective 0: coverage

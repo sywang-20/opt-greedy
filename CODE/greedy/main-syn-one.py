@@ -30,13 +30,13 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(usage="it's usage tip.", description="help info.")
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--new_plans", type=int, default=2, help="the number of new plans generated from one sensor")
-    parser.add_argument("--size", type=int, default=100, help="the size of the network")
+    parser.add_argument("--size", type=int, default=500, help="the size of the network")
 
     args = parser.parse_args()
 
     # 读取前面的各类参数
     num_of_individuals = 20 #args.num_of_individual
-    new_plans_num = 5 #args.new_plans
+    new_plans_num = 15 #args.new_plans
     size= args.size
 
     max_sensor=int(size/10)
@@ -82,8 +82,20 @@ if __name__=='__main__':
                           node_num=node_num, upstream_arr=upstream_arr,
                          upstream_set=upstream_set,graph=relabeled_G,conn_dict=conn_dict)
 
-        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new/'+str(size)+'/'+str(i)+'/'+'max_sensor_' \
-                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+ '_new_plans_' + str(new_plans_num)+'/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new_no_filter/' + str(size) + '/' + str(
+        #     i) + '/' + 'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_new_filter/'+str(size)+'/'+str(i)+'/'+'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+ '_new_plans_' + str(new_plans_num)+'/'
+
+        # fig_path = '../../TESTOUTPUT/synthetic_case/greedy_no_combination/' + str(size) + '/' + str(i) + '/' + 'max_sensor_' \
+        #            + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num) + '/'
+
+        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_coverage/' + str(size) + '/' + str(
+            i) + '/' + 'max_sensor_' \
+                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '/'
 
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
@@ -97,7 +109,10 @@ if __name__=='__main__':
 
         print("start")
         start=time.time()
-        solution = evo.evolve()
+        #solution = evo.evolve_no_filter()
+        # solution = evo.evolve_filter()
+        # solution = evo.evolve_no_combination()
+        solution = evo.evolve_coverage()
         end=time.time()
 
         with open(os.path.join(fig_path, "time.txt"), "w") as tf:
