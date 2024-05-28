@@ -5,7 +5,6 @@ import numpy as np
 import math
 # from nsga.evolution import Evolution
 # from nsga.problem import Problem
-from evolution import Evolution
 from problem import Problem
 # from nsga import precomputation
 # from nsga import objective
@@ -17,14 +16,15 @@ import argparse
 import os
 import constraint
 import time
-
+from evolution_cz import Evolution
+# from evolution import Evolution
 '''
 对synthetic case进行计算
 '''
 def run_case(size):
     max_sensor=int(size/10)
     num_of_individuals=20
-    new_plans_num=5
+    new_plans_num=25
     case_dir="../../DATA/synthetic_network/"+str(size)+"/"
     # 数一下这个size下有多少个不同网络。若使用这个，则是遍历所有同一size的synthetic network
     # count = 0
@@ -36,7 +36,7 @@ def run_case(size):
 
     # 创建结果文件夹+读取synthetic network
     for i in range(count+1):
-        sol_dir= '../../TESTOUTPUT/synthetic_case/greedy_original/'+str(size)+'/'+str(i)
+        sol_dir= '../../TESTOUTPUT-backup2-draft1/synthetic_case/greedy_original_new_plans/'+str(size)+'/'+str(i)
         if os.path.exists(sol_dir):
             continue
         # if not os.path.exists(sol_dir):
@@ -70,8 +70,8 @@ def run_case(size):
                           node_num=node_num, upstream_arr=upstream_arr,
                          upstream_set=upstream_set,graph=relabeled_G,conn_dict=conn_dict)
 
-        fig_path = '../../TESTOUTPUT/synthetic_case/greedy_original/'+str(size)+'/'+str(i)+'/'+'max_sensor_' \
-                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+'/'
+        fig_path = '../../TESTOUTPUT-backup2-draft1/synthetic_case/greedy_original_new_plans/'+str(size)+'/'+str(i)+'/'+'max_sensor_' \
+                   + str(max_sensor) + '_Lmax_' + str(num_of_individuals)+'_new_plans_' + str(new_plans_num)+'/'
 
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
@@ -81,7 +81,7 @@ def run_case(size):
         fig_path=fig_path+str(suffix)
 
 
-        evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,
+        evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,new_plans_num = new_plans_num,
                         fig_path=fig_path, node_num=node_num)
 
         print("start")

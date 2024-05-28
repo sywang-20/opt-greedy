@@ -3,7 +3,8 @@ import networkx as nx
 import numpy as np
 import argparse
 import os
-from evolution import Evolution  # control the iterative process of NSGA-II
+#from evolution import Evolution  # control the iterative process of NSGA-II
+from evolution_cz import Evolution
 from problem import Problem  # 构建problem
 import objective  # 目标函数的计算
 import individual
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_of_individual", type=int, default=10, help="the number of reserved plans in each step")
     parser.add_argument("--datadir", type=str, default="../../DATA/real_life_case_network/data/")  # 对应网络数据的保存目录
     parser.add_argument("--outdir", type=str,
-                        default="../../TESTOUTPUT/real_case/greedy_original/")  # 对应输出结果的保存目录
+                        default="../../TESTOUTPUT-backup2-draft1/real_case/greedy_original/")  # 对应输出结果的保存目录
 
     args = parser.parse_args()
 
@@ -57,12 +58,13 @@ if __name__ == '__main__':
     output_dir = args.outdir
     parent_dir = args.datadir
     num_of_individuals = args.num_of_individual
+    new_plans_num=30
 
     # 读取network data
     upstream_set, upstream_arr, relabeled_G, node_num, conn_dict = pre_read_real(parent_dir)
 
 
-    fig_path = os.path.join(output_dir, 'max_sensor_' + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '/')
+    fig_path = os.path.join(output_dir, 'max_sensor_' + str(max_sensor) + '_Lmax_' + str(num_of_individuals) + '_new_plans_' + str(new_plans_num)+ '/')
 
     # 根据输出数据目录是否存在，创建目录
     if not os.path.exists(fig_path):
@@ -87,7 +89,7 @@ if __name__ == '__main__':
                       conn_dict=conn_dict)
 
     # controls the iterative process of NSGA-II. evolution函数对上面构建的problem进行求解-->需要修改算法的话，应该主要修改evolution里的东西
-    evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,  #每个iteration保留多少plan
+    evo = Evolution(problem, max_sensor=max_sensor, num_of_individuals=num_of_individuals,  new_plans_num=new_plans_num, #每个iteration保留多少plan
                     fig_path=fig_path)
 
     print("start")
