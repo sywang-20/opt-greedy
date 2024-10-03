@@ -1,4 +1,4 @@
-# **Code for Nondominated Solution-based Multi-objective Evolutionary Greedy Algorithm**
+# **Code for Evolutionary Greedy Algorithm for Optimal Sensor Placement Problem in Urban Sewage Surveillance**
 
 1. greedy\
 the code which introduces the evolutionary mechanism into the greedy algorithm
